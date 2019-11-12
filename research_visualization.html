@@ -5,6 +5,7 @@
     <title>Research Visualization</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="graph_code.js"></script>
+    <script src="research_data.js"></script>
     <link href="research_visualization.css" rel="stylesheet" type="text/css"></link>
 </head>
 
@@ -14,15 +15,6 @@
 </body>
 
 <script type="text/javascript">
-    var raw_data = [
-        {"name": "Zero-shot task adaptation by homoiconic meta-mapping",
-         "attributes": ["Zero-shot", "Transfer"]},
-        {"name": "An analytic theory of generalization dynamics and transfer learning in deep linear networks",
-         "attributes": ["Generalization", "Theory", "Transfer"]},
-        {"name": "One-shot and few-shot learning of word embeddings",
-         "attributes": ["Few-shot", "Memory"]}
-        ];
-
-    display_graph(raw_data);
+    display_graph(projects);
 </script> 
 </html>

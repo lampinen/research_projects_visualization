@@ -5,23 +5,25 @@ function build_graph(projects) {
     var links = [];
     var num_projects = projects.length;
     var attribute_indices = {};
-    var attribute_id = num_projects;
+    var node_id = 0;
     for (var i=0; i < num_projects; i++) {
-        projects[i].id = i;
+        projects[i].id = node_id;
+        var this_project_id = node_id;
+        node_id++;
         projects[i].type = "project";
         for (var j=0; j < projects[i].attributes.length; j++){
             var this_attribute = projects[i].attributes[j];
             if (!attributes_seen.includes(this_attribute)) {
                 attributes_seen.push(this_attribute);
                 attributes.push({
-                    id: attribute_id,
+                    id: node_id,
                     name: this_attribute,
                     type: "attribute"
                 });
-                attribute_indices[this_attribute] = attribute_id;
-                attribute_id++;
+                attribute_indices[this_attribute] = node_id;
+                node_id++;
             }
-            links.push({source: i, target: attribute_indices[this_attribute]})
+            links.push({source: this_project_id, target: attribute_indices[this_attribute]})
         }
     }
     return {nodes: projects.concat(attributes),
@@ -31,8 +33,8 @@ function build_graph(projects) {
 
 function display_graph(raw_data) {
     //Some code cannabalized from https://www.d3-graph-gallery.com/graph/network_basic.html
-    const width = 1024;
-    const height = 1024;
+    const width = 2048;
+    const height = 2048;
     const radius = height/32;
     const fontsize = "32pt";
     const text_dx = -radius/3;
@@ -49,6 +51,12 @@ function display_graph(raw_data) {
 
     var data = build_graph(raw_data);
     var num_nodes = data.length;
+
+    // node initial positions
+    data.nodes.forEach(function(d, i) {
+        d.y = (height/num_nodes) * i;
+        d.x = positions[d.type]; 
+      });
 
     var svg = d3
         .select("#svg-container")
@@ -87,7 +95,6 @@ function display_graph(raw_data) {
         .enter()
         .append("g")
 
-
     var node_circles = node
       .append("circle")
           .attr("r", radius)
@@ -99,14 +106,15 @@ function display_graph(raw_data) {
             .text(d => d.id)
               .style("fill", d => font_colors[d.type])
 
+
     var simulation = d3.forceSimulation(data.nodes)                 
         .force("x", d3.forceX().x(d => positions[d.type]))
         .force("link", d3.forceLink()                               // This force provides links between nodes
               .id(function(d) { return d.id; })                     // This provide  the id of a node
               .links(data.edges)                                    // and this the list of links
-              .strength(0.01)
+              .strength(0.005)
         )
-        .force("charge", d3.forceManyBody().strength(-300))         // This adds repulsion between nodes. Play with the -400 for the repulsion strength
+        .force("charge", d3.forceManyBody().strength(-500))         // This adds repulsion between nodes. Play with the -400 for the repulsion strength
         .force("center", d3.forceCenter(width / 2, height / 2))     // This force attracts nodes to the center of the svg area
         .on("end", ticked);
         
