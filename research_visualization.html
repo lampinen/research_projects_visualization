@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Research Visualization</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="research_data.js"></script>
+    <script src="graph_code.js"></script>
+    <script type="text/javascript">
+        var this_graph = build_graph(projects);
+        display_graph(this_graph);
+    </script> 
+    <link href="research_visualization.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+<div id="svg-container" class="svg-container">
+</div>
+</body>
+</html>
