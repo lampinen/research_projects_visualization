@@ -1,18 +1,28 @@
 <!DOCTYPE html>
+<meta charset="utf-8">
 <html>
-  <head>
+<head>
     <title>Research Visualization</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="research_data.js"></script>
     <script src="graph_code.js"></script>
-    <script type="text/javascript">
-        var this_graph = build_graph(projects);
-        display_graph(this_graph);
-    </script> 
     <link href="research_visualization.css" rel="stylesheet" type="text/css"></link>
 </head>
+
 <body>
 <div id="svg-container" class="svg-container">
 </div>
 </body>
+
+<script type="text/javascript">
+    var raw_data = [
+        {"name": "Zero-shot task adaptation by homoiconic meta-mapping",
+         "attributes": ["Zero-shot", "Transfer"]},
+        {"name": "An analytic theory of generalization dynamics and transfer learning in deep linear networks",
+         "attributes": ["Generalization", "Theory", "Transfer"]},
+        {"name": "One-shot and few-shot learning of word embeddings",
+         "attributes": ["Few-shot", "Memory"]}
+        ];
+
+    display_graph(raw_data);
+</script> 
 </html>
