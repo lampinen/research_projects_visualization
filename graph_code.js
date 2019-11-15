@@ -94,7 +94,7 @@ function display_graph(raw_data) {
         .data(data.nodes)
         .enter()
         .append("g")
-        .on("mousedown", highlight_node);
+        .on("mousedown", node_click);
 
     var node_ellipses = node
 //      .append("circle")
@@ -164,6 +164,34 @@ function display_graph(raw_data) {
 
     var currently_highlighted = -1;
     // animation & interaction
+    var double_click_timeout = 400;
+    var recent_click = false;
+    var is_double_click = false;
+    function node_click(d) {
+        if (recent_click === d) {
+            is_double_click = true;
+            double_click_handler(d);
+        } else {
+            recent_click = d;
+            setTimeout(single_click_handler, double_click_timeout);
+        }
+    }
+
+    function single_click_handler() {
+        if(is_double_click) {
+            is_double_click = false;
+        } else {
+            highlight_node(recent_click);
+        }
+        recent_click = false;
+    }
+    
+    function double_click_handler(d) {
+        if (d.url != "") {
+            window.open(d.url, '_blank');
+        }
+    }
+
     function highlight_node(d) {
         if (currently_highlighted === d.id) {
             dehighlight();
