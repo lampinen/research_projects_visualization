@@ -18,6 +18,7 @@ function build_graph(projects) {
                 attributes.push({
                     id: node_id,
                     name: this_attribute,
+                    url: "",
                     type: "attribute"
                 });
                 attribute_indices[this_attribute] = node_id;
@@ -33,12 +34,13 @@ function build_graph(projects) {
 
 function display_graph(raw_data) {
     //Some code cannabalized from https://www.d3-graph-gallery.com/graph/network_basic.html
-    const width = 2048;
-    const height = 2048;
-    const radius_y = height/32;
-    const radius_x = width/8;
-    const collide_radius = height/16;
-    const fontsize = "32pt";
+    const width = 1300;
+    const height = 1300;
+    const length_scale = 700;
+    const radius_y = length_scale/24;
+    const radius_x = length_scale/6;
+    const collide_radius = length_scale/8;
+    const fontsize = "16pt";
 
     const colors = {project: "#6600CC", 
                     attribute: "#00DD22"};
@@ -46,11 +48,11 @@ function display_graph(raw_data) {
     const font_colors = {project: "FFFFFF", 
                          attribute: "#000000"};
 
-    const positions = {project: 5 * width / 6, 
-                       attribute: width / 6};
+    const positions = {project: width - length_scale / 3, 
+                       attribute: length_scale / 3};
 
-    const radii = {opaque: width / 4, 
-                    transparent: width / 2};
+    const radii = {opaque: length_scale / 6, 
+                   transparent: length_scale / 1.5};
 
     var data = build_graph(raw_data);
     var num_nodes = data.length;
@@ -127,17 +129,19 @@ function display_graph(raw_data) {
 
     set_initial_positions();
     var simulation = d3.forceSimulation(data.nodes)                 
-        .force("x", d3.forceX().x(d => positions[d.type]).strength(0.17))
-        .force("link", d3.forceLink()                               // This force provides links between nodes
-              .id(function(d) { return d.id; })                     // This provide  the id of a node
-              .links(data.edges)                                    // and this the list of links
-              .distance(0.5 * width)
+        .force("x", d3.forceX().x(d => positions[d.type]).strength(0.3))
+        .force("link", d3.forceLink()                               
+              .id(function(d) { return d.id; })                    
+              .links(data.edges)                                    
+              .distance(0.66 * length_scale)
               .strength(0.02)
         )
-        .force("charge", d3.forceManyBody().strength(-100).distanceMax(height/10))   
-        .force("collide", d3.forceCollide().strength(1).radius(collide_radius))
-        .force("center", d3.forceCenter(width / 2, height / 2))     // This force attracts nodes to the center of the svg area
-        .force("radial", d3.forceRadial(d => d.opaque ? width / 8 : width / 2, width / 2, height / 2).strength(0))
+        .force("charge", d3.forceManyBody().strength(-80).distanceMax(length_scale/8))   
+        .force("collide", d3.forceCollide().strength(0.2).radius(collide_radius))
+        .force("center", d3.forceCenter(width / 2, height / 2))     
+        // the following force will be turned on when a node is highlighted, to
+        // attract it and its neighbors to the center
+        .force("radial", d3.forceRadial(d => d.opaque ? radii.opaque : radii.transparent, width / 2, height / 2).strength(0))
         .on("tick", ticked);
         
     function ticked() {
@@ -197,6 +201,8 @@ function display_graph(raw_data) {
     function double_click_handler(d) {
         if (d.url != "") {
             window.open(d.url);
+        } else {
+            is_double_click = false;
         }
     }
 
@@ -226,8 +232,8 @@ function display_graph(raw_data) {
         }
         this_node.opaque = true;
         currently_highlighted = d.id;
-        simulation.force("radial").strength(1);
-        simulation.alpha(1).restart();
+        simulation.force("radial").strength(0.5);
+        simulation.alpha(0.25).restart();
         //ticked(); // update
     }
 

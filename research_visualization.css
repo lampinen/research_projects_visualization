@@ -6,3 +6,15 @@ text {
     text-anchor: middle;
     dominant-baseline: middle;
 }
+
+*::selection {
+    background:transparent;
+}
+
+*::-moz-selection {
+    background:transparent;
+}
+
+*::-webkit-selection {
+    background:transparent;
+}
