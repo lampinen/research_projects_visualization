@@ -37,6 +37,7 @@ function display_graph(raw_data) {
     const height = 2048;
     const radius_y = height/32;
     const radius_x = width/8;
+    const collide_radius = height/16;
     const fontsize = "32pt";
 
     const colors = {project: "#6600CC", 
@@ -48,15 +49,21 @@ function display_graph(raw_data) {
     const positions = {project: 5 * width / 6, 
                        attribute: width / 6};
 
+    const radii = {opaque: width / 4, 
+                    transparent: width / 2};
+
     var data = build_graph(raw_data);
     var num_nodes = data.length;
+    var currently_highlighted = -1;
 
     // node initial positions and settings
-    data.nodes.forEach(function(d, i) {
-        d.y = (height/num_nodes) * i;
-        d.x = positions[d.type]; 
-        d.opaque = true;
-      });
+    function set_initial_positions() {
+        data.nodes.forEach(function(d, i) {
+            d.y = (height/num_nodes) * i;
+            d.x = positions[d.type]; 
+            d.opaque = true;
+          });
+    }
 
     var svg = d3
         .select("#svg-container")
@@ -117,20 +124,22 @@ function display_graph(raw_data) {
           .style("fill", "#FFFFFF")
           .attr("opacity", 0);
 
+
+    set_initial_positions();
     var simulation = d3.forceSimulation(data.nodes)                 
-        .force("x", d3.forceX().x(d => positions[d.type]).strength(0.3))
+        .force("x", d3.forceX().x(d => positions[d.type]).strength(0.17))
         .force("link", d3.forceLink()                               // This force provides links between nodes
               .id(function(d) { return d.id; })                     // This provide  the id of a node
               .links(data.edges)                                    // and this the list of links
               .distance(0.5 * width)
-              .strength(0.01)
+              .strength(0.02)
         )
-        .force("charge", d3.forceManyBody().strength(-2000).distanceMax(height/15))         // This adds repulsion between nodes. Play with the -400 for the repulsion strength
+        .force("charge", d3.forceManyBody().strength(-100).distanceMax(height/10))   
+        .force("collide", d3.forceCollide().strength(1).radius(collide_radius))
         .force("center", d3.forceCenter(width / 2, height / 2))     // This force attracts nodes to the center of the svg area
-        .on("end", ticked);
+        .force("radial", d3.forceRadial(d => d.opaque ? width / 8 : width / 2, width / 2, height / 2).strength(0))
+        .on("tick", ticked);
         
-        
-    // This function is run at each iteration of the force algorithm, updating the nodes position.
     function ticked() {
       link
           .attr("x1", function(d) { return d.source.x; })
@@ -162,7 +171,6 @@ function display_graph(raw_data) {
       });
     }
 
-    var currently_highlighted = -1;
     // animation & interaction
     var double_click_timeout = 400;
     var recent_click = false;
@@ -188,7 +196,7 @@ function display_graph(raw_data) {
     
     function double_click_handler(d) {
         if (d.url != "") {
-            window.open(d.url, '_blank');
+            window.open(d.url);
         }
     }
 
@@ -218,7 +226,9 @@ function display_graph(raw_data) {
         }
         this_node.opaque = true;
         currently_highlighted = d.id;
-        ticked(); // update
+        simulation.force("radial").strength(1);
+        simulation.alpha(1).restart();
+        //ticked(); // update
     }
 
     function dehighlight() {
@@ -226,7 +236,9 @@ function display_graph(raw_data) {
             d.opaque = true;
           });
         currently_highlighted = false;
-        ticked(); // update
+        simulation.force("radial").strength(0);
+        simulation.alpha(1).restart();
+        //ticked(); // update
     }
 
 
