@@ -20,7 +20,7 @@ var projects = [
      url: "https://arxiv.org/pdf/1910.00571.pdf",
      attributes: ["Generalization", "Transfer", "Zero-shot", "Language", "RL"]},
     {long_name: "Zero-shot task adaptation by homoiconic meta-mapping",
-     name: "Zero-shot HoMM",
+     name: "Meta-mapping",
      url: "https://arxiv.org/pdf/1905.09950.pdf",
      attributes: ["Zero-shot", "Transfer", "Cognition"]},
     {long_name: "Automated curricula through setter-solver interactions",
