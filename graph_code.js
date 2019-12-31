@@ -38,21 +38,21 @@ function display_graph(raw_data) {
     const height = 1300;
     const length_scale = 700;
     const radius_y = length_scale/24;
-    const radius_x = length_scale/6;
+    const radius_x = length_scale/5;
     const collide_radius = length_scale/8;
-    const fontsize = "16pt";
+    const fontsize = "15pt";
 
     const colors = {project: "#6600CC", 
                     attribute: "#00DD22"};
 
-    const font_colors = {project: "FFFFFF", 
+    const font_colors = {project: "#FFFFFF", 
                          attribute: "#000000"};
 
     const positions = {project: width - length_scale / 3, 
                        attribute: length_scale / 3};
 
     const radii = {opaque: length_scale / 6, 
-                   transparent: length_scale / 1.5};
+                   transparent: length_scale / 1.2};
 
     var data = build_graph(raw_data);
     var num_nodes = data.length;
@@ -133,7 +133,7 @@ function display_graph(raw_data) {
         .force("link", d3.forceLink()                               
               .id(function(d) { return d.id; })                    
               .links(data.edges)                                    
-              .distance(0.66 * length_scale)
+              .distance(0.6 * length_scale)
               .strength(0.02)
         )
         .force("charge", d3.forceManyBody().strength(-80).distanceMax(length_scale/8))   
@@ -232,8 +232,8 @@ function display_graph(raw_data) {
         }
         this_node.opaque = true;
         currently_highlighted = d.id;
-        simulation.force("radial").strength(0.5);
-        simulation.alpha(0.25).restart();
+        simulation.force("radial").strength(0.66);
+        simulation.alpha(1).restart();
         //ticked(); // update
     }
 
