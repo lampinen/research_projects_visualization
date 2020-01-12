@@ -42,8 +42,8 @@ function display_graph(raw_data) {
     const collide_radius = length_scale/8;
     const fontsize = "15pt";
 
-    const colors = {project: "#6600CC", 
-                    attribute: "#00DD22"};
+    const colors = {project: "#4d004b", 
+                    attribute: "#bfd3e6"};
 
     const font_colors = {project: "#FFFFFF", 
                          attribute: "#000000"};
